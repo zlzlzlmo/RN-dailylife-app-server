@@ -3,15 +3,20 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateUserDto } from './dtos/create-user.dto';
 import * as bcrypt from 'bcryptjs';
 import * as jwt from 'jsonwebtoken';
+import { Tokens } from './types';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private jwtService: JwtService,
+  ) {}
 
-  async createUser({ email, nickName, password }: CreateUserDto) {
+  async signUp({ userId, nickName, password }: CreateUserDto): Promise<Tokens> {
     const hasEmail = await this.prismaService.user.findUnique({
       where: {
-        email,
+        userId,
       },
     });
 
@@ -19,37 +24,82 @@ export class UserService {
 
     const hasNickName = await this.prismaService.user.findUnique({
       where: {
-        nick_name: nickName,
+        nickName,
       },
     });
 
     if (hasNickName)
       throw new ConflictException('이미 닉네임이 이미 존재합니다.');
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await this.hashData(password);
 
     const user = await this.prismaService.user.create({
       data: {
-        email,
-        nick_name: nickName,
+        userId,
+        nickName,
         password: hashedPassword,
       },
     });
-    return this.generateJWT(user.email, user.id);
+    const tokens = await this.getTokens(user.id, user.userId);
+    await this.updateRefreshToken(user.id, tokens.refreshToken);
+    return tokens;
   }
 
-  private async generateJWT(email: string, id: number) {
-    const token = await jwt.sign(
-      {
-        name: email,
+  async signIn() {
+    return 1;
+  }
+
+  async signOut() {
+    return 1;
+  }
+
+  async refreshTokens() {
+    return 1;
+  }
+
+  private async hashData(password: string) {
+    return await bcrypt.hash(password, 10);
+  }
+
+  private async getTokens(id: number, userId: string) {
+    const [accessToken, refreshToken] = await Promise.all([
+      this.jwtService.signAsync(
+        {
+          sub: id,
+          userId,
+        },
+        {
+          secret: 'at-secret',
+          expiresIn: 60 * 15,
+        },
+      ),
+      this.jwtService.signAsync(
+        {
+          sub: id,
+          userId,
+        },
+        {
+          secret: 'rt-secret',
+          expiresIn: 60 * 60 * 24 * 7,
+        },
+      ),
+    ]);
+
+    return {
+      accessToken,
+      refreshToken,
+    };
+  }
+
+  private async updateRefreshToken(id: number, refreshToken: string) {
+    const hash = await this.hashData(refreshToken);
+    await this.prismaService.user.update({
+      where: {
         id,
       },
-      process.env.JSON_TOKEN_KEY,
-      {
-        expiresIn: 360000,
+      data: {
+        refreshToken,
       },
-    );
-
-    return token;
+    });
   }
 }

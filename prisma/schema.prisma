@@ -8,8 +8,12 @@ datasource db {
 }
 
 model User {
-  id        Int    @id @default(autoincrement())
-  email     String @unique
-  nick_name String @unique
-  password  String
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId       String  @unique
+  nickName     String  @unique
+  password     String
+  refreshToken String?
 }
