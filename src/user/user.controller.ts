@@ -1,5 +1,6 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { CreateUserDto } from './dtos/create-user.dto';
+import { SignInUserDto } from './dtos/signin-user-dto';
 import { Tokens } from './types';
 import { UserService } from './user.service';
 
@@ -13,8 +14,8 @@ export class UserController {
   }
 
   @Post('/signin')
-  signIn() {
-    return this.userService.signIn();
+  signIn(@Body() body: SignInUserDto): Promise<Tokens> {
+    return this.userService.signIn(body);
   }
 
   @Post('/signout')

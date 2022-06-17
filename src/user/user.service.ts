@@ -1,10 +1,15 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateUserDto } from './dtos/create-user.dto';
 import * as bcrypt from 'bcryptjs';
 import * as jwt from 'jsonwebtoken';
 import { Tokens } from './types';
 import { JwtService } from '@nestjs/jwt';
+import { SignInUserDto } from './dtos/signin-user-dto';
 
 @Injectable()
 export class UserService {
@@ -45,8 +50,22 @@ export class UserService {
     return tokens;
   }
 
-  async signIn() {
-    return 1;
+  async signIn({ userId, password }: SignInUserDto): Promise<Tokens> {
+    const user = await this.prismaService.user.findUnique({
+      where: {
+        userId,
+      },
+    });
+
+    if (!user) throw new ForbiddenException('해당 유저가 존재하지 않습니다');
+
+    const passwordMatches = await bcrypt.compare(password, user.password);
+    if (!passwordMatches)
+      throw new ForbiddenException('비밀번호가 일치하지 않습니다');
+
+    const tokens = await this.getTokens(user.id, user.userId);
+    await this.updateRefreshToken(user.id, tokens.refreshToken);
+    return tokens;
   }
 
   async signOut() {
