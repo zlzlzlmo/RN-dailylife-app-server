@@ -5,3 +5,9 @@ content-type: application/json
     "userId": "te111st",
     "password":"test"
 }
+
+###
+
+POST http://localhost:3000/user/signout HTTP/1.1
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInVzZXJJZCI6InRlMTExc3QiLCJpYXQiOjE2NTU1MDYyODksImV4cCI6MTY1NTUwNzE4OX0._2OTE2G7HEmNc8TdEDPBEstQMh97TSbgosCM9goc5xM

@@ -68,8 +68,19 @@ export class UserService {
     return tokens;
   }
 
-  async signOut() {
-    return 1;
+  async signOut(id: number) {
+    // refresh 토큰이 널이 아니면 널로 만들어주기
+    await this.prismaService.user.updateMany({
+      where: {
+        id,
+        refreshToken: {
+          not: null,
+        },
+      },
+      data: {
+        refreshToken: null,
+      },
+    });
   }
 
   async refreshTokens() {
