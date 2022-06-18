@@ -6,7 +6,6 @@ import {
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateUserDto } from './dtos/create-user.dto';
 import * as bcrypt from 'bcryptjs';
-import * as jwt from 'jsonwebtoken';
 import { Tokens } from './types';
 import { JwtService } from '@nestjs/jwt';
 import { SignInUserDto } from './dtos/signin-user-dto';
@@ -83,8 +82,24 @@ export class UserService {
     });
   }
 
-  async refreshTokens() {
-    return 1;
+  async refreshTokens(id: number, refreshToken: string) {
+    console.log('id : ', id);
+    console.log('refreshToken : ', refreshToken);
+    const user = await this.prismaService.user.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!user) throw new ForbiddenException('존재하지 않는 유저입니다');
+
+    // const rtMatches = await bcrypt.compare(refreshToken, user.refreshToken);
+    const rtMatches = refreshToken === user.refreshToken;
+    if (!rtMatches) throw new ForbiddenException('잘못된 접근');
+
+    const tokens = await this.getTokens(user.id, user.userId);
+    await this.updateRefreshToken(user.id, tokens.refreshToken);
+    return tokens;
   }
 
   private async hashData(password: string) {

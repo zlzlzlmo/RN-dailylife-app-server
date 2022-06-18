@@ -1,8 +1,19 @@
+POST http://localhost:3000/user/signup HTTP/1.1
+content-type: application/json
+
+{
+    "userId": "te111111st",
+    "nickName":"test",
+    "password":"test"
+}
+
+### 
+
 POST http://localhost:3000/user/signin HTTP/1.1
 content-type: application/json
 
 {
-    "userId": "te111st",
+    "userId": "te111111st",
     "password":"test"
 }
 
@@ -10,4 +21,10 @@ content-type: application/json
 
 POST http://localhost:3000/user/signout HTTP/1.1
 content-type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInVzZXJJZCI6InRlMTExc3QiLCJpYXQiOjE2NTU1MDYyODksImV4cCI6MTY1NTUwNzE4OX0._2OTE2G7HEmNc8TdEDPBEstQMh97TSbgosCM9goc5xM
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjIsInVzZXJJZCI6InRlMTExMTExc3QiLCJpYXQiOjE2NTU1MTE0NjQsImV4cCI6MTY1NTUxMjM2NH0.1cKonXLJbStborU7B683u4CzhqzcqmKb4uu3lrGc6zE
+
+###
+
+POST http://localhost:3000/user/refresh HTTP/1.1
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjIsInVzZXJJZCI6InRlMTExMTExc3QiLCJpYXQiOjE2NTU1MTExNDcsImV4cCI6MTY1NjExNTk0N30.5Cn_LcTpV1X_xqNsii5rn-wjGyWDe2Okk_day4A_tv4
