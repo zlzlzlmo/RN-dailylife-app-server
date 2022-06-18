@@ -7,7 +7,8 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
+import { GetCurrentUserId } from 'src/common/decorators';
+import { GetCurrentUser } from 'src/common/decorators/get-current-user.decorator';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { SignInUserDto } from './dtos/signin-user-dto';
 import { AccessTokenGuard, RefreshTokenGuard } from './guard';
@@ -33,18 +34,17 @@ export class UserController {
   @UseGuards(AccessTokenGuard)
   @Post('/signout')
   @HttpCode(HttpStatus.OK)
-  signOut(@Request() req) {
-    const user = req.user;
-    console.log('user : ', user);
-    return this.userService.signOut(user['sub']);
+  signOut(@GetCurrentUserId() id: number) {
+    return this.userService.signOut(id);
   }
 
   @UseGuards(RefreshTokenGuard)
   @Post('/refresh')
   @HttpCode(HttpStatus.OK)
-  refreshTokens(@Request() req) {
-    const user = req.user;
-    console.log(user['sub']);
-    return this.userService.refreshTokens(user['sub'], user['refreshToken']);
+  refreshTokens(
+    @GetCurrentUserId() id: number,
+    @GetCurrentUser('refreshToken') refreshToken: string,
+  ) {
+    return this.userService.refreshTokens(id, refreshToken);
   }
 }
