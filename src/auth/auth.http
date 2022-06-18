@@ -1,0 +1,30 @@
+POST http://localhost:3000/auth/signup HTTP/1.1
+content-type: application/json
+
+{
+    "userId": "tddasfdsa",
+    "password":"tdddest",
+    "nickName":"sdafsfsa"
+}
+
+###
+
+POST http://localhost:3000/auth/login HTTP/1.1
+content-type: application/json
+
+{
+    "userId": "tddasfdsa",
+    "password":"tdddest"
+}
+
+###
+
+POST http://localhost:3000/auth/logout HTTP/1.1
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjQsInVzZXJJZCI6InRkZGFzZmRzYSIsImlhdCI6MTY1NTUzOTU5MiwiZXhwIjoxNjU1NTQwNDkyfQ.VYHknqwr3z2FvEdoigN4pIjuFTAodoJzDa_8JqZKL30
+
+###
+
+POST http://localhost:3000/auth/refresh HTTP/1.1
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjQsInVzZXJJZCI6InRkZGFzZmRzYSIsImlhdCI6MTY1NTUzOTUwNCwiZXhwIjoxNjU2MTQ0MzA0fQ.EMeNFMj0Fb3Banw1ovMZNMgFQrzsISB3ymqdK7Q3r0k
