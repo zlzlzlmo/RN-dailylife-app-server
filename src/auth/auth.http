@@ -2,9 +2,9 @@ POST http://localhost:3000/auth/signup HTTP/1.1
 content-type: application/json
 
 {
-    "userId": "tddasfdsa",
-    "password":"tdddest",
-    "nickName":"sdafsfsa"
+    "userId": "test",
+    "password":"test",
+    "nickName":"testtest"
 }
 
 ###

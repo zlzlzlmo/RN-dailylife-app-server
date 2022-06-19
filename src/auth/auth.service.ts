@@ -1,4 +1,8 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserService } from 'src/user/user.service';
 import { SignInUserDto } from './dtos/signin-user-dto';
@@ -38,7 +42,7 @@ export class AuthService {
 
   async login({ password, userId }: SignInUserDto) {
     const user = await this.userSerivce.findUserByUserId(userId);
-    if (!user) throw new ForbiddenException('해당 유저가 존재하지 않습니다');
+    if (!user) throw new NotFoundException('해당 유저가 존재하지 않습니다.');
 
     const passwordMatches = await bcrypt.compare(password, user.password);
     if (!passwordMatches)
